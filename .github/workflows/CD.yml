@@ -25,19 +25,21 @@ on:
 jobs:
   cd-build:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       #setup environment
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
 
@@ -46,10 +48,10 @@ jobs:
         run: |
           if [[ '${{ github.event_name }}' == 'push' ]]
           then
-            echo "::set-output name=url::https://${blob_account}.blob.core.windows.net/${blob_container_for_js}/index.html"
+            echo "url=https://${blob_account}.blob.core.windows.net/${blob_container_for_js}/index.html" >> $GITHUB_OUTPUT
           elif [[ '${{ github.event_name }}' == 'pull_request' ]]
           then
-            echo "::set-output name=url::https://${blob_account}.blob.core.windows.net/${blob_container_for_pull_request}/${blob_path_for_pull_request}/${dashboardDirectory}/index.html"
+            echo "url=https://${blob_account}.blob.core.windows.net/${blob_container_for_pull_request}/${blob_path_for_pull_request}/${dashboardDirectory}/index.html" >> $GITHUB_OUTPUT
           else
             echo "Invalid event $${{ github.event_name }}"
           fi
@@ -62,7 +64,7 @@ jobs:
         run: yarn auto-version
       - name: Get version
         id: version
-        run: echo ::set-output name=version::$(cat version.cfg)
+        run: echo "version=$(cat version.cfg)" >> $GITHUB_OUTPUT
 
       - name: Build Typescript
         run: yarn buildall
@@ -82,6 +84,10 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
         working-directory: ${{ env.widgetDirectory }}
+      - name: Install rai_test_utils locally until next version is released
+        run: |
+          pip install -v -e .
+        working-directory: rai_test_utils
       - name: pip freeze
         run: pip freeze
       - name: replace README for raiwidgets
@@ -111,13 +117,14 @@ jobs:
         run: pytest -s -v --durations=10
 
       - name: Upload a Build result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
 
       - name: Upload dashboard ${{steps.publish_url_for_js.outputs.url}}
         uses: Azure/cli@v1.0.0
+        id: uploaddashboard
         with:
           azcliversion: 2.16.0
           inlineScript: |
@@ -130,16 +137,18 @@ jobs:
             else
               echo "Invalid event $${{ github.event_name }}"
             fi
+        continue-on-error: true
 
-      - uses: unsplash/comment-on-pr@master
-        if: ${{ github.event_name  == 'pull_request' }}
+      - if: ${{ (github.event_name  == 'pull_request') && (steps.uploaddashboard.outcome != 'failure') }}
+        uses: unsplash/comment-on-pr@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           msg: ${{steps.publish_url_for_js.outputs.url}}
           check_for_duplicate_msg: true
 
-      - name: Upload responsible-ai
+      - if: ${{ (steps.uploaddashboard.outcome != 'failure') }}
+        name: Upload responsible-ai
         uses: Azure/cli@v1.0.0
         with:
           azcliversion: 2.16.0
@@ -154,7 +163,8 @@ jobs:
               echo "Invalid event $${{ github.event_name }}"
             fi
 
-      - name: Upload raiwidgets
+      - if: ${{ (steps.uploaddashboard.outcome != 'failure') }}
+        name: Upload raiwidgets
         uses: Azure/cli@v1.0.0
         with:
           azcliversion: 2.16.0
@@ -171,9 +181,10 @@ jobs:
 
       - name: Get retention cut off date
         id: retention_date
-        run: echo "::set-output name=date::$(date --date='${{env.retentionDays}} days ago' +'%Y-%m-%dT00:00Z')"
+        run: echo "date=$(date --date='${{env.retentionDays}} days ago' +'%Y-%m-%dT00:00Z')" >> $GITHUB_OUTPUT
 
-      - name: Delete old files before ${{steps.retention_date.outputs.date}}
+      - if: ${{ (steps.uploaddashboard.outcome != 'failure') }}
+        name: Delete old files before ${{steps.retention_date.outputs.date}}
         uses: Azure/cli@v1.0.0
         with:
           azcliversion: 2.16.0
@@ -208,12 +219,12 @@ jobs:
 
     steps:
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
       - id: download
         name: Download a Build Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist

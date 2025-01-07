@@ -13,20 +13,20 @@ jobs:
     strategy:
       matrix:
         operatingSystem: [ubuntu-latest, windows-latest]
-        pythonVersion: [3.6, 3.7, 3.8, 3.9, "3.10"]
+        pythonVersion: [3.9, "3.10"]
 
     runs-on: ${{ matrix.operatingSystem }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: ${{ matrix.pythonVersion }}
 
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
 
@@ -74,8 +74,9 @@ jobs:
           cat installed-requirements-dev.txt
         working-directory: raiwidgets
 
-      - name: Upload requirements
-        uses: actions/upload-artifact@v3
+      - if: ${{ (matrix.operatingSystem == 'windows-latest') && (matrix.pythonVersion == '3.9') }}
+        name: Upload requirements
+        uses: actions/upload-artifact@v4
         with:
           name: requirements-dev.txt
           path: raiwidgets/installed-requirements-dev.txt
@@ -86,14 +87,14 @@ jobs:
 
       - name: Upload notebook test result
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: notebook-test-${{ matrix.operatingSystem }}-${{ matrix.pythonVersion }}
           path: notebooks
 
       - name: Upload e2e test screen shot
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: raiwidgets-e2e-screen-shot
+          name: raiwidgets-ci-notebook-screen-shot-${{ matrix.operatingSystem }}-${{ matrix.pythonVersion }}
           path: dist/cypress

@@ -59,7 +59,7 @@ export class CohortToolBar extends React.Component<
   public componentDidMount(): void {
     const cohortNames: string[] = [];
     this.props.cohorts.forEach((cohort: ErrorCohort) => {
-      cohortNames.push(cohort.cohort.name.toLowerCase());
+      cohortNames.push(cohort.cohort.name.toLocaleLowerCase());
     });
     const selectionCount: number = this.props.selectedIndices.length;
     this.setState({ cohortNames, selectionCount });
@@ -72,7 +72,7 @@ export class CohortToolBar extends React.Component<
     if (prevProps.cohorts !== this.props.cohorts) {
       const cohortNames: string[] = [];
       this.props.cohorts.forEach((cohort: ErrorCohort) => {
-        cohortNames.push(cohort.cohort.name.toLowerCase());
+        cohortNames.push(cohort.cohort.name.toLocaleLowerCase());
       });
       this.setState({ cohortNames });
     }
@@ -98,6 +98,7 @@ export class CohortToolBar extends React.Component<
             <PrimaryButton
               text={localization.InterpretVision.Cohort.save}
               onClick={this.openDialogue}
+              ariaLabel={localization.InterpretVision.Cohort.save}
             />
           </Stack.Item>
         </Stack>
@@ -120,6 +121,7 @@ export class CohortToolBar extends React.Component<
                   <Text
                     className={classNames.errorMessage}
                     variant="mediumPlus"
+                    aria-label={this.state.errorMessage}
                   >
                     {this.state.errorMessage}
                   </Text>
@@ -130,10 +132,20 @@ export class CohortToolBar extends React.Component<
                   <PrimaryButton
                     onClick={this.addCohortWrapper(true)}
                     text={localization.InterpretVision.Cohort.saveAndSwitch}
+                    ariaLabel={
+                      this.state.errorMessage
+                        ? this.state.errorMessage
+                        : localization.InterpretVision.Cohort.saveAndSwitch
+                    }
                   />
                   <DefaultButton
                     onClick={this.addCohortWrapper(false)}
                     text={localization.InterpretVision.Cohort.saveAndClose}
+                    ariaLabel={
+                      this.state.errorMessage
+                        ? this.state.errorMessage
+                        : localization.InterpretVision.Cohort.saveAndClose
+                    }
                   />
                 </DialogFooter>
               </Stack.Item>
@@ -168,7 +180,9 @@ export class CohortToolBar extends React.Component<
       this.setState({
         errorMessage: localization.InterpretVision.Cohort.errorNumSelected
       });
-    } else if (this.state.cohortNames.includes(cohortName.toLowerCase())) {
+    } else if (
+      this.state.cohortNames.includes(cohortName.toLocaleLowerCase())
+    ) {
       this.setState({
         errorMessage: localization.InterpretVision.Cohort.errorCohortName
       });

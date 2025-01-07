@@ -91,6 +91,16 @@
     }
   },
   "Core": {
+    "AccessibleDetailsList": {
+      "ResizableDialog": {
+        "title": "Resize Column",
+        "subText": "Enter desired column width in pixels:"
+      },
+      "resize": "Resize",
+      "cancel": "Cancel",
+      "minErrorMessage": "Column width must be a positive integer greater than {0}.",
+      "minMaxErrorMessage": "Column width must be a positive integer greater than {0} and less than {1}."
+    },
     "ExpandableText": {
       "SeeLess": "See less",
       "SeeMore": "See more"
@@ -113,6 +123,7 @@
     },
     "ShiftCohort": {
       "apply": "Apply",
+      "applyAriaLabel": "Apply cohort",
       "cancel": "Cancel",
       "title": "Switch Cohort",
       "subText": "Select a cohort from the cohort list. Apply the cohort to the dashboard.",
@@ -129,6 +140,7 @@
     }
   },
   "Counterfactuals": {
+    "AriaLabel": "Counterfactual",
     "CurrentTreatment": "Current treatment",
     "EffectLowerBound": "CI lower",
     "EffectOfTreatment": "Effect of recommendation",
@@ -154,6 +166,7 @@
     "counterfactualName": "What-if counterfactual name",
     "createWhatIfCounterfactual": "Create what-if counterfactual",
     "createCounterfactual": "Counterfactual",
+    "counterfactualAriaLabel": "Counterfactual creation",
     "revertToBubbleChart": "View bubble chart",
     "createOwn": "Create your own counterfactual:",
     "currentClass": "Current class",
@@ -483,11 +496,13 @@
     },
     "BinDialog": {
       "cancel": "Cancel",
+      "cancelAriaLabel": "Cancel binning",
       "categoryHeader": "Bin values:",
       "header": "Configure bins",
       "makeCategorical": "Treat as categorical",
       "numberOfBins": "Number of bins:",
-      "save": "Save"
+      "save": "Save",
+      "saveAriaLabel": "Save binning"
     },
     "DropdownHeaders": {
       "errorMetric": "Enable error bars",
@@ -704,6 +719,7 @@
       "backToComparisons": "Back to all models",
       "backToComparisonsLegacy": "Multimodel view",
       "chartChoiceDropdownHeader": "Charts",
+      "chartChoiceAriaLabel": "Chart selection",
       "classificationOutcomesHowToRead": "The bar chart shows the selection rate in each group, meaning the fraction of points classified as 1.",
       "classificationPerformanceHowToRead1": "The bar chart shows the distribution of errors in each group.",
       "classificationPerformanceHowToRead2": "Errors are split into overprediction errors (predicting 1 when the true label is 0), and underprediction errors (predicting 0 when the true label is 1).",
@@ -909,6 +925,8 @@
         "regressionError": "Error"
       },
       "TreatAsCategorical": "Treat as categorical",
+      "TreatAsCategoricalAriaLabelChecked": "Treat as categorical checked, number of unique values: {0}",
+      "TreatAsCategoricalAriaLabelUnchecked": "Treat as categorical unchecked, min value: {0}, max value: {1}",
       "_TreatAsCategorical.comment": "a checkbox label to treat integers as categories instead of as numbers",
       "_addFilter.comment": "button text to add the current settings as a new filter",
       "_addedFilters.comment": "header above the list of filters that have been saved",
@@ -920,8 +938,10 @@
       "_placeholderName.comment": "starting name for a new cohort",
       "_selectFilter.comment": "prompt to select an attribute to filter on",
       "addFilter": "Add filter",
+      "addFilterAriaLabel": "Add cohort filter",
       "addedFilters": "Filters",
       "cancel": "Cancel",
+      "cancelAriaLabel": "Cancel cohort",
       "cancelExistingCohort": "Are you sure you want to cancel editing cohort and go back?",
       "cancelNewCohort": "Are you sure you want to cancel creating a new cohort and go back?",
       "cancelNo": "No",
@@ -934,11 +954,13 @@
       "clearAllFilters": "Clear all filters",
       "defaultFilterState": "Select a filter to add parameters to your dataset cohort. Filters from your current viewing cohort are pre-populated.",
       "delete": "Delete",
+      "deleteAriaLabel": "Delete cohort",
       "invalidValueError": "Value should be between {0} and {1}",
       "minimumGreaterThanMaximum": "Minimum value inputs must be less than maximum value inputs.",
       "noAddedFilters": "No filters",
       "placeholderName": "Cohort {0}",
       "save": "Save",
+      "saveAriaLabel": "Save cohort",
       "saveAndSwitch": "Save and switch",
       "selectFilter": "Select filter",
       "noFiltersApplied": "No filters applied",
@@ -994,7 +1016,7 @@
       "individualDatapoints": "Individual datapoints",
       "missingParameters": "This tab requires an evaluation dataset be supplied.",
       "noColor": "None",
-      "datasetCohortDropdown": "Dataset cohort dropdown"
+      "datasetCohortDropdown": "Dataset cohort"
     },
     "DependencePlot": {
       "_featureImportanceOf.comment": "axis label on chart showing the importance of a selected feature (column)",
@@ -1199,12 +1221,16 @@
       "_rSquared.comment": "the coefficient of determination, see https://en.wikipedia.org/wiki/Coefficient_of_determination",
       "_recall.comment": "computed recall of model, see https://en.wikipedia.org/wiki/Evaluation_of_binary_classifiers",
       "accuracy": "Accuracy: {0}",
+      "coherence": "Coherence: {0}",
       "bleuScore": "Bleu score: {0}",
       "bertScore": "Bert score: {0}",
       "exactMatchRatio": "Exact match ratio: {0}",
+      "equivalence": "Equivalence: {0}",
       "rougeScore": "Rouge Score: {0}",
+      "fluency": "Fluency: {0}",
       "fnr": "False negative rate: {0}",
       "fpr": "False positive rate: {0}",
+      "groundedness": "Groundedness: {0}",
       "hammingScore": "Hamming score: {0}",
       "meanPrediction": "Mean prediction {0}",
       "meteorScore": "Meteor Score: {0}",
@@ -1212,6 +1238,7 @@
       "precision": "Precision: {0}",
       "rSquared": "R²: {0}",
       "recall": "Recall: {0}",
+      "relevance": "Relevance: {0}",
       "selectionRate": "Selection rate: {0}",
       "mae": "Mean absolute error: {0}",
       "f1Score": "F1 score: {0}",
@@ -1446,13 +1473,16 @@
       "filter": "Filter",
       "indexLabel": "Image ",
       "labelTypeDropdown": "Select label type",
+      "labelTypeAriaLabel": "Label type",
       "labelVisibilityDropdown": "Select labels to display",
+      "labelVisibilityAriaLabel": "Label visibility",
       "legendFailure": "failure",
       "legendSuccess": "success",
-      "loading": "Computing explanation for index",
+      "loading": "Computing explanation for image of index",
       "multiselect": "Multiselect",
       "notdefined": "object scenario not defined",
       "objectSelect": "Object Selection",
+      "objectSelectionLabel": "objectSelectLabel",
       "pageSize": "Page size: ",
       "panelTitle": "Selected instance",
       "panelExplanation": "Explanation",
@@ -1463,6 +1493,7 @@
       "incorrectDetections": "Incorrect detections: ",
       "prefix": "Object: ",
       "rows": "Rows: ",
+      "rowsAriaLabel": "Number of rows per page",
       "search": "Search",
       "selectAll": "Select all",
       "settings": "Settings",
@@ -1474,12 +1505,19 @@
       "titleBarError": "Error instances",
       "titleBarSuccess": "Success instances",
       "trueY": "Ground truth: "
+    },
+    "Search": {
+      "defaultSearchLabel": "Search for image instances",
+      "searchResultsAriaLabel": "{0} results found for the entered keyword {1} where the number of success instances is {2} and the number of error instances is {3}",
+      "emptySearchResultsAriaLabel": "No results found for the entered keyword {0}"
     }
   },
   "ModelAssessment": {
     "AddingTab": {
       "AddButtonText": "Add",
       "CalloutContent": "Adding some components (error tree view, error heat map) will allow you to filter down the data from the global cohort that you see in the components below.",
+      "AddComponentAriaLabel": "Add dashboard component",
+      "AddButtonAriaLabel": "Add dashboard",
       "CalloutTitle": "Add component",
       "TabAddedMessage": {
         "DataAnalysis": "Data analysis component added",
@@ -1507,13 +1545,17 @@
     "Cohort": {
       "apply": "Apply",
       "delete": "Delete",
+      "deleteAriaLabel": "Delete cohort",
       "cancel": "Cancel",
+      "cancelAriaLabel": "Cancel cohort",
       "cohortInfo": "Cohort info",
       "cohortList": "Cohort list",
       "deleteCohort": "Deleting {0}?",
       "deleteConfirm": "Are you sure you want to delete this cohort?",
       "selectCohort": "Select a cohort",
+      "selectCohortAriaLabel": "Cohort selection",
       "shiftCohort": "Switch cohort",
+      "shiftCohortAriaLabel": "Switch cohort",
       "shiftCohortDescription": "Select a cohort from the cohort list. Apply the cohort to the dashboard."
     },
     "CohortInformation": {
@@ -1729,9 +1771,25 @@
           "name": "Accuracy score",
           "description": "The fraction of data points classified correctly."
         },
+        "coherence": {
+          "name": "Coherence",
+          "description": "Coherence of an answer is measured by how well all the sentences fit together and sound naturally as a whole."
+        },
+        "fluency": {
+          "name": "Fluency",
+          "description": "Fluency measures the quality of individual sentences in the answer, and whether they are well-written and grammatically correct."
+        },
+        "equivalence": {
+          "name": "Equivalence",
+          "description": "Equivalence, as a metric, measures the similarity between the predicted answer and the correct answer."
+        },
         "exactMatchRatio": {
           "name": "Exact match ratio",
           "description": "The ratio of instances classified correctly for every label."
+        },
+        "groundedness": {
+          "name": "Groundedness",
+          "description": "Groundedness measures whether the answer follows logically from the information in the context."
         },
         "meteorScore": {
           "name": "Meteor Score",
@@ -1744,6 +1802,10 @@
         "bertScore": {
           "name": "Bert Score",
           "description": "BERTScore focuses on computing semantic similarity between tokens of reference and machine generated text in question answering task."
+        },
+        "relevance": {
+          "name": "Relevance",
+          "description": "Relevance measures how well the answer addresses the main aspects of the question, based on the context"
         },
         "rougeScore": {
           "name": "Rouge Score",
@@ -1908,7 +1970,11 @@
         "flyoutHeader": "Choose your features",
         "flyoutSubHeader": "Along which features would you like to evaluate your model's fairness?",
         "flyoutDescription": "Fairness is evaluated in terms of disparities in your model's behavior. We will split your data according to values of each selected feature, and evaluate how your model's performance metrics differ across these splits.",
+        "selectAllRowsAriaLabel": "Select all rows",
+        "flyoutAriaLabel": "Aggregate balance measures",
         "featureColumnHeader": "Features",
+        "featureSelectionAriaLabel": "Feature selection table",
+        "metricSelectionAriaLabel": "Metric selection table",
         "groupsColumnHeader": "Groups",
         "categoricalGroupsCountRemark": "This feature has {0} unique values.",
         "continuousGroupsCountRemark": "This feature is continuous and split into {0} bins.",
@@ -1992,7 +2058,9 @@
       "cancel": "Cancel",
       "cohortList": "Time series list",
       "selectCohort": "Select a time series",
+      "selectCohortAriaLabel": "Time series selection",
       "shiftCohort": "Switch time series",
+      "shiftCohortAriaLabel": "Switch time series",
       "shiftCohortDescription": "Select a time series from the time series list. Apply the time series to the dashboard."
     },
     "TimeSeriesSettings": {

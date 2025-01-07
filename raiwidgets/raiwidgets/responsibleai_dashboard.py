@@ -3,6 +3,8 @@
 
 """Defines the Model Analysis Dashboard class."""
 
+import json
+
 from flask import jsonify, request
 
 from raiutils.models import ModelTask
@@ -27,10 +29,14 @@ class ResponsibleAIDashboard(Dashboard):
     :param cohort_list:
         List of cohorts defined by the user for the dashboard.
     :type cohort_list: List[Cohort]
+    :param is_private_link: If the dashboard environment is
+        a private link AML workspace.
+    :type is_private_link: bool
     """
     def __init__(self, analysis: RAIInsights,
                  public_ip=None, port=None, locale=None,
-                 cohort_list=None, **kwargs):
+                 cohort_list=None, is_private_link=False,
+                 **kwargs):
         self.input = ResponsibleAIDashboardInput(
             analysis, cohort_list=cohort_list)
 
@@ -41,6 +47,7 @@ class ResponsibleAIDashboard(Dashboard):
             port=port,
             locale=locale,
             no_inline_dashboard=True,
+            is_private_link=is_private_link,
             **kwargs)
 
         def predict():
@@ -114,3 +121,28 @@ class ResponsibleAIDashboard(Dashboard):
             '/get_question_answering_metrics',
             methods=["POST"]
         )
+
+        def get_generative_text_metrics():
+            data = request.get_json(force=True)
+            return jsonify(self.input.get_generative_text_metrics(data))
+        self.add_url_rule(
+            get_generative_text_metrics,
+            '/get_generative_text_metrics',
+            methods=["POST"]
+        )
+
+        if hasattr(self._service, 'socketio'):
+            @self._service.socketio.on('handle_object_detection_json')
+            def handle_object_detection_json(od_json):
+                od_data = json.loads(od_json['data'])
+                return self.input.get_object_detection_metrics(od_data)
+
+            @self._service.socketio.on('handle_question_answering_json')
+            def handle_question_answering_json(qa_json):
+                qa_data = json.loads(qa_json['data'])
+                return self.input.get_question_answering_metrics(qa_data)
+
+            @self._service.socketio.on('handle_generative_text_json')
+            def handle_generative_text_json(gt_json):
+                gt_data = json.loads(gt_json['data'])
+                return self.input.get_generative_text_metrics(gt_data)

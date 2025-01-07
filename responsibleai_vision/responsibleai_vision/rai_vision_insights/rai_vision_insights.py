@@ -10,7 +10,6 @@ import os
 import pickle
 import shutil
 import warnings
-from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
@@ -22,8 +21,6 @@ import torch
 from ml_wrappers import wrap_model
 from ml_wrappers.common.constants import Device
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
-from vision_explanation_methods.error_labeling.error_labeling import (
-    ErrorLabeling, ErrorLabelType)
 
 from erroranalysis._internal.cohort_filter import FilterDataWithCohortFilters
 from raiutils.data_processing import convert_to_list
@@ -37,7 +34,7 @@ from responsibleai.rai_insights.rai_base_insights import RAIBaseInsights
 from responsibleai.serialization_utilities import serialize_json_safe
 from responsibleai_vision.common.constants import (CommonTags,
                                                    ExplainabilityDefaults,
-                                                   ImageColumns,
+                                                   ImageColumns, ImageModes,
                                                    MLFlowSchemaLiterals,
                                                    ModelTask)
 from responsibleai_vision.managers.error_analysis_manager import \
@@ -47,7 +44,8 @@ from responsibleai_vision.utils.feature_extractors import extract_features
 from responsibleai_vision.utils.image_reader import (
     get_base64_string_from_path, get_image_from_path, is_automl_image_model)
 from responsibleai_vision.utils.image_utils import (
-    convert_images, get_images, transform_object_detection_labels)
+    convert_images, generate_od_error_labels, get_images,
+    transform_object_detection_labels)
 
 IMAGE = ImageColumns.IMAGE.value
 IMAGE_URL = ImageColumns.IMAGE_URL.value
@@ -85,10 +83,6 @@ _DATETIME_FEATURES = 'datetime_features'
 _TIME_SERIES_ID_FEATURES = 'time_series_id_features'
 _CATEGORICAL_FEATURES = 'categorical_features'
 _DROPPED_FEATURES = 'dropped_features'
-_INCORRECT = 'incorrect'
-_CORRECT = 'correct'
-_AGGREGATE_LABEL = 'aggregate'
-_NOLABEL = '(none)'
 
 
 def reshape_image(image):
@@ -135,7 +129,7 @@ class RAIVisionInsights(RAIBaseInsights):
                  classes: Optional[np.ndarray] = None,
                  serializer: Optional[Any] = None,
                  maximum_rows_for_test: int = 5000,
-                 image_mode: str = "RGB",
+                 image_mode: str = ImageModes.RGB,
                  test_data_path: Optional[str] = None,
                  transformations: Optional[Any] = None,
                  image_downloader: Optional[Any] = None,
@@ -267,7 +261,7 @@ class RAIVisionInsights(RAIBaseInsights):
             serializer)
 
         ext_test, ext_features = extract_features(
-            self.test, self.target_column, self.task_type,
+            self.test, self.target_column,
             self.image_mode,
             self._feature_metadata)
         self._ext_test = ext_test
@@ -650,6 +644,8 @@ class RAIVisionInsights(RAIBaseInsights):
         for _, image in enumerate(images):
             if isinstance(image, str):
                 image = get_image_from_path(image, self.image_mode)
+            if isinstance(image, list):
+                image = np.array(image)
             s = io.BytesIO()
             # IMshow only accepts floats in range [0, 1]
             try:
@@ -699,75 +695,13 @@ class RAIVisionInsights(RAIBaseInsights):
             )
 
             dashboard_dataset.object_detection_labels = \
-                self._generate_od_error_labels(
+                generate_od_error_labels(
                     dashboard_dataset.object_detection_true_y,
                     dashboard_dataset.object_detection_predicted_y,
                     class_names=dashboard_dataset.class_names
                 )
 
         return dashboard_dataset
-
-    def _generate_od_error_labels(self, true_y, pred_y, class_names):
-        """Utilized Error Labeling to generate labels
-        with correct and incorrect objects.
-
-        :param true_y: The true labels.
-        :type true_y: list
-        :param pred_y: The predicted labels.
-        :type pred_y: list
-        :param class_names: The class labels in the dataset.
-        :type class_names: list
-        :return: The aggregated labels.
-        :rtype: List[str]
-        """
-        object_detection_labels = []
-        for image_idx in range(len(true_y)):
-            image_labels = defaultdict(lambda: defaultdict(int))
-            rendered_labels = {}
-            error_matrix = ErrorLabeling(
-                ModelTask.OBJECT_DETECTION,
-                pred_y[image_idx],
-                true_y[image_idx]
-            ).compute_error_labels()
-
-            for label_idx in range(len(error_matrix)):
-                object_label = class_names[
-                    int(true_y[image_idx][label_idx][0] - 1)]
-                if ErrorLabelType.MATCH in error_matrix[label_idx]:
-                    image_labels[_CORRECT][object_label] += 1
-                else:
-                    image_labels[_INCORRECT][object_label] += 1
-
-                duplicate_detections = np.count_nonzero(
-                    error_matrix[label_idx] ==
-                    ErrorLabelType.DUPLICATE_DETECTION)
-                if duplicate_detections > 0:
-                    image_labels[_INCORRECT][object_label] += \
-                        duplicate_detections
-
-            correct_labels = sorted(image_labels[_CORRECT].items(),
-                                    key=lambda x: class_names.index(x[0]))
-            incorrect_labels = sorted(image_labels[_INCORRECT].items(),
-                                      key=lambda x: class_names.index(x[0]))
-
-            rendered_labels[_CORRECT] = ', '.join(
-                f'{value} {key}' for key, value in
-                correct_labels)
-            if len(rendered_labels[_CORRECT]) == 0:
-                rendered_labels[_CORRECT] = _NOLABEL
-            rendered_labels[_INCORRECT] = ', '.join(
-                f'{value} {key}' for key, value in
-                incorrect_labels)
-            if len(rendered_labels[_INCORRECT]) == 0:
-                rendered_labels[_INCORRECT] = _NOLABEL
-            rendered_labels[_AGGREGATE_LABEL] = \
-                f"{sum(image_labels[_CORRECT].values())} {_CORRECT}, \
-                  {sum(image_labels[_INCORRECT].values())} \
-                  {_INCORRECT}"
-
-            object_detection_labels.append(rendered_labels)
-
-        return object_detection_labels
 
     def _format_od_labels(self, y, class_names):
         """Formats the Object Detection label representation to
@@ -787,7 +721,8 @@ class RAIVisionInsights(RAIBaseInsights):
             object_labels_lst = [0] * len(class_names)
             for detection in image:
                 # tracking number of same objects in the image
-                object_labels_lst[int(detection[0] - 1)] += 1
+                object_index = int(detection[0] - 1)
+                object_labels_lst[object_index] += 1
             formatted_labels.append(object_labels_lst)
 
         return formatted_labels
@@ -855,11 +790,12 @@ class RAIVisionInsights(RAIBaseInsights):
             os.makedirs(mltable_directory, exist_ok=True)
             mltable_data_dict = {}
             if self.test_mltable_path:
-                mltable_dir = self.test_mltable_path.split('/')[-1]
+                test_mltable_path = Path(self.test_mltable_path)
+                mltable_dir = test_mltable_path.name
                 mltable_data_dict[_TEST_MLTABLE_PATH] = mltable_dir
                 test_dir = mltable_directory / mltable_dir
                 shutil.copytree(
-                    Path(self.test_mltable_path), test_dir
+                    test_mltable_path, test_dir
                 )
             if mltable_data_dict:
                 dict_path = mltable_directory / _MLTABLE_METADATA_FILENAME
@@ -1095,12 +1031,14 @@ class RAIVisionInsights(RAIBaseInsights):
             mltable_dict = {}
             with open(mltable_dict_path, 'r') as file:
                 mltable_dict = json.load(file)
-
             if mltable_dict.get(_TEST_MLTABLE_PATH, ''):
                 inst.test_mltable_path = str(mltable_directory / mltable_dict[
                     _TEST_MLTABLE_PATH])
                 test_dataset = inst._image_downloader(inst.test_mltable_path)
                 inst.test = test_dataset._images_df
+                if inst.task_type == ModelTask.OBJECT_DETECTION.value:
+                    inst.test = transform_object_detection_labels(
+                        inst.test, target_column, inst._classes)
 
     @staticmethod
     def _load_transformations(inst, path):
@@ -1157,7 +1095,9 @@ class RAIVisionInsights(RAIBaseInsights):
         # load current state
         RAIBaseInsights._load(
             path, inst, manager_map, RAIVisionInsights._load_metadata)
-        inst._wrapped_model = wrap_model(inst.model, inst.test, inst.task_type,
+        sample = inst.test.iloc[0:2]
+        sample = get_images(sample, inst.image_mode, inst._transformations)
+        inst._wrapped_model = wrap_model(inst.model, sample, inst.task_type,
                                          classes=inst._classes,
                                          device=inst.device)
         inst.automl_image_model = is_automl_image_model(inst._wrapped_model)
@@ -1183,14 +1123,17 @@ class RAIVisionInsights(RAIBaseInsights):
             device = torch.device(self.device)
         normalized_iou_threshold = [iou_threshold / 100.0]
         all_cohort_metrics = []
+        all_cohort_classes = []
         for cohort_indices in selection_indexes:
             key = ','.join([str(cid) for cid in cohort_indices] +
                            [aggregate_method, class_name, str(iou_threshold)])
             if key in object_detection_cache:
                 all_cohort_metrics.append(object_detection_cache[key])
+                all_cohort_classes.append([class_name])
                 continue
 
             metric_OD = MeanAveragePrecision(
+                average=aggregate_method.lower(),
                 class_metrics=True,
                 iou_thresholds=normalized_iou_threshold).to(device)
             true_y_cohort = [true_y[cohort_index] for cohort_index
@@ -1236,6 +1179,7 @@ class RAIVisionInsights(RAIBaseInsights):
             # to catch if the class is not in the cohort
             if class_name not in cohort_classes:
                 all_cohort_metrics.append([-1, -1, -1])
+                all_cohort_classes.append([class_name])
             else:
                 metric_OD.update(cohort_pred,
                                  cohort_gt)
@@ -1257,4 +1201,5 @@ class RAIVisionInsights(RAIBaseInsights):
                 all_submetrics = [[mAP, APs[i], ARs[i]]
                                   for i in range(len(APs))]
                 all_cohort_metrics.append(all_submetrics)
-        return [all_cohort_metrics, cohort_classes]
+                all_cohort_classes.append(cohort_classes)
+        return [all_cohort_metrics, all_cohort_classes]

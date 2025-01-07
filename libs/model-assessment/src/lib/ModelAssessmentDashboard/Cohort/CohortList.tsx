@@ -4,11 +4,11 @@
 import {
   CheckboxVisibility,
   IColumn,
-  DetailsList,
   DetailsListLayoutMode,
   SelectionMode
 } from "@fluentui/react";
 import {
+  AccessibleDetailsList,
   Cohort,
   CohortEditor,
   DatasetCohort,
@@ -76,7 +76,7 @@ export class CohortList extends React.Component<
     const items = this.getCohortListItems();
     return (
       <>
-        <DetailsList
+        <AccessibleDetailsList
           items={items}
           columns={columns}
           setKey="set"
@@ -84,6 +84,7 @@ export class CohortList extends React.Component<
           selectionMode={SelectionMode.none}
           checkboxVisibility={CheckboxVisibility.hidden}
           onRenderItemColumn={this.renderItemColumn}
+          ariaLabel={localization.Core.ShiftCohort.cohortList}
         />
         {this.state.currentEditCohort && (
           <CohortEditor

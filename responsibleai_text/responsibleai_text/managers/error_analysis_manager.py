@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from ml_wrappers import wrap_model
 
+from erroranalysis._internal.constants import ModelTask as ErrorAnalysisTask
 from erroranalysis._internal.error_analyzer import ModelAnalyzer
 from erroranalysis._internal.error_report import as_error_report
 from responsibleai._tools.shared.state_directory_management import \
@@ -22,6 +23,7 @@ from responsibleai.managers.error_analysis_manager import \
 from responsibleai.managers.error_analysis_manager import as_error_config
 from responsibleai_text.common.constants import ModelTask
 from responsibleai_text.utils.feature_extractors import get_text_columns
+from responsibleai_text.utils.genai_metrics.metrics import get_genai_metric
 
 LABELS = 'labels'
 
@@ -83,6 +85,14 @@ class WrappedIndexPredictorModel:
             self.predictions = self.model.predict(
                 self.dataset.loc[:, ['context', 'questions']])
             self.predictions = np.array(self.predictions)
+        elif self.task_type == ModelTask.GENERATIVE_TEXT:
+            # TODO: Decide the final metric for error analysis
+            coherence = get_genai_metric(
+                'coherence',
+                predictions=self.model.predict(self.dataset),
+                references=dataset['prompt'],
+                wrapper_model=self.model)
+            self.predictions = np.array(coherence['scores'])
         else:
             raise ValueError("Unknown task type: {}".format(self.task_type))
 
@@ -193,9 +203,17 @@ class ErrorAnalysisManager(BaseErrorAnalysisManager):
             task_type, index_classes)
         if categorical_features is None:
             categorical_features = []
+        if task_type == ModelTask.GENERATIVE_TEXT:
+            sup_task_type = ErrorAnalysisTask.REGRESSION
+            ext_dataset = ext_dataset.copy()
+            del ext_dataset['prompt']
+            target_column = 'target_score'
+            ext_dataset[target_column] = 5
+        else:
+            sup_task_type = ErrorAnalysisTask.CLASSIFICATION
         super(ErrorAnalysisManager, self).__init__(
             index_predictor, ext_dataset, target_column,
-            classes, categorical_features)
+            classes, categorical_features, model_task=sup_task_type)
 
     @staticmethod
     def _create_index_predictor(model, dataset, target_column,
@@ -226,7 +244,8 @@ class ErrorAnalysisManager(BaseErrorAnalysisManager):
         :return: A wrapped predictor that uses index to retrieve text data.
         :rtype: WrappedIndexPredictorModel
         """
-        dataset = dataset.drop(columns=[target_column])
+        if target_column is not None:
+            dataset = dataset.drop(columns=[target_column])
         dataset = get_text_columns(dataset, text_column)
         index_predictor = WrappedIndexPredictorModel(
             model, dataset, is_multilabel, task_type, classes)

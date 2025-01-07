@@ -160,10 +160,11 @@ export class TabsView extends React.PureComponent<
               {t.key === GlobalTabKeys.VisionTab &&
                 this.props.dataset.images &&
                 this.props.dataset.predicted_y &&
+                this.props.dataset.true_y &&
                 this.props.dataset.class_names && (
                   <>
                     <div className={classNames.sectionHeader}>
-                      <Text variant={"xxLarge"}>
+                      <Text as="h3" variant={"xxLarge"}>
                         {localization.ModelAssessment.ComponentNames.VisionTab}
                       </Text>
                     </div>
@@ -213,7 +214,7 @@ export class TabsView extends React.PureComponent<
                       className={classNames.sectionHeader}
                       id="errorAnalysisHeader"
                     >
-                      <Text variant={"xxLarge"}>
+                      <Text as="h2" variant={"xxLarge"}>
                         {
                           localization.ModelAssessment.ComponentNames
                             .ErrorAnalysis

@@ -23,10 +23,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
 
@@ -40,7 +40,7 @@ jobs:
         run: yarn buildall
 
       - name: Upload the build result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: raiwidgets-js
           path: raiwidgets/raiwidgets/widget
@@ -56,17 +56,17 @@ jobs:
       matrix:
         # TODO: add macos
         operatingSystem: [ubuntu-latest, windows-latest]
-        pythonVersion: [3.7, 3.8, 3.9, "3.10"]
+        pythonVersion: [3.8, 3.9, "3.10"]
         flights: [""]
         notebookGroup: ["vis_nb_group_1", "text_nb_group_1"]
 
     runs-on: ${{ matrix.operatingSystem }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js ${{ env.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
 
@@ -77,12 +77,12 @@ jobs:
         run: yarn install --frozen-lock-file
 
       - name: Download the UI build result
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: raiwidgets-js
           path: raiwidgets/raiwidgets/widget
 
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: ${{ matrix.pythonVersion }}
@@ -90,7 +90,7 @@ jobs:
       - name: Install pytorch
         shell: bash -l {0}
         run: |
-          conda install --yes --quiet pytorch torchvision captum cpuonly -c pytorch
+          conda install --yes --quiet "pytorch==1.13.1" "torchvision<0.15" cpuonly "numpy<1.24.0" -c pytorch
 
       - name: Setup tools
         shell: bash -l {0}
@@ -99,9 +99,16 @@ jobs:
           pip install --upgrade setuptools
           pip install --upgrade "pip-tools<=7.1.0"
 
+      - name: Install backwards-compatible keras for transformers
+        shell: bash -l {0}
+        run: |
+          pip install tf-keras
+          pip install keras==2.15
+
       - name: Install dependencies
         shell: bash -l {0}
         run: |
+          pip install captum
           pip install -r requirements-dev.txt
           pip install -v -e .
         working-directory: raiwidgets
@@ -136,7 +143,7 @@ jobs:
         working-directory: raiwidgets
 
       - name: Upload requirements
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: requirements-dev.txt
           path: raiwidgets/installed-requirements-dev.txt
@@ -160,7 +167,7 @@ jobs:
 
       - name: Upload e2e test screen shot
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: raiwidgets-e2e-screen-shot
           path: ./dist/cypress
