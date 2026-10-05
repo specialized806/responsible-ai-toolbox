@@ -88,10 +88,10 @@ export class TabsView extends React.PureComponent<
 
   public constructor(props: ITabsViewProps) {
     super(props);
-    const weightVectorLabels = {
+    const weightVectorLabels: Dictionary<string> = {
       [WeightVectors.AbsAvg]: localization.Interpret.absoluteAverage
     };
-    const weightVectorOptions = [];
+    const weightVectorOptions: WeightVectorOption[] = [];
     if (IsClassifier(props.modelMetadata.modelType)) {
       weightVectorOptions.push(WeightVectors.AbsAvg);
     }
@@ -121,7 +121,8 @@ export class TabsView extends React.PureComponent<
     };
     if (
       this.props.requestImportances &&
-      this.context.dataset.task_type !== DatasetTaskType.Forecasting
+      this.props.errorAnalysisData?.[0] &&
+      this.props.dataset.task_type !== DatasetTaskType.Forecasting
     ) {
       this.props
         .requestImportances([], new AbortController().signal)
@@ -160,10 +161,11 @@ export class TabsView extends React.PureComponent<
               {t.key === GlobalTabKeys.VisionTab &&
                 this.props.dataset.images &&
                 this.props.dataset.predicted_y &&
+                this.props.dataset.true_y &&
                 this.props.dataset.class_names && (
                   <>
                     <div className={classNames.sectionHeader}>
-                      <Text variant={"xxLarge"}>
+                      <Text as="h3" variant={"xxLarge"}>
                         {localization.ModelAssessment.ComponentNames.VisionTab}
                       </Text>
                     </div>
@@ -213,7 +215,7 @@ export class TabsView extends React.PureComponent<
                       className={classNames.sectionHeader}
                       id="errorAnalysisHeader"
                     >
-                      <Text variant={"xxLarge"}>
+                      <Text as="h2" variant={"xxLarge"}>
                         {
                           localization.ModelAssessment.ComponentNames
                             .ErrorAnalysis

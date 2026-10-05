@@ -115,6 +115,22 @@ class WrappedIndexPredictorModel:
             self.predictions = np.array(predictions_joined)
         self.predict_proba = self.model.predict_proba(test)
 
+    def index_predictions(self, index, predictions):
+        """Index the predictions.
+
+        :param index: The index to use.
+        :type index: list
+        :param predictions: The predictions to index.
+        :type predictions: list
+        """
+        if not isinstance(index, list):
+            index = list(index)
+        if isinstance(predictions, list):
+            predictions = [predictions[i] for i in index]
+        else:
+            predictions = predictions[index]
+        return predictions
+
     def predict(self, X):
         """Predict the class labels for the provided data.
 
@@ -124,7 +140,7 @@ class WrappedIndexPredictorModel:
         :rtype: list
         """
         index = X.index
-        predictions = self.predictions[index]
+        predictions = self.index_predictions(index, self.predictions)
         if self.task_type == ModelTask.MULTILABEL_IMAGE_CLASSIFICATION or \
                 self.task_type == ModelTask.OBJECT_DETECTION:
             return predictions
@@ -141,7 +157,7 @@ class WrappedIndexPredictorModel:
         :rtype: list[list]
         """
         index = X.index
-        pred_proba = self.predict_proba[index]
+        pred_proba = self.index_predictions(index, self.predict_proba)
         return pred_proba
 
 
@@ -300,13 +316,21 @@ class ErrorAnalysisManager(BaseErrorAnalysisManager):
         feature_names = list(dataset.columns)
         inst.__dict__['_feature_names'] = feature_names
         task_type = rai_insights.task_type
-        wrapped_model = wrap_model(rai_insights.model, dataset,
-                                   task_type,
-                                   classes=rai_insights._classes,
-                                   device=rai_insights.device)
+        classes = rai_insights._classes
+        device = rai_insights.device
+
+        test = rai_insights.test
+        image_mode = rai_insights.image_mode
+        transformations = rai_insights._transformations
+        sample = test.iloc[0:2]
+        sample = get_images(sample, image_mode, transformations)
+        wrapped_model = wrap_model(
+            rai_insights.model, sample, task_type, classes=classes,
+            device=device)
+
         inst.__dict__['_task_type'] = task_type
-        index_classes = rai_insights._classes
-        index_dataset = rai_insights.test
+        index_classes = classes
+        index_dataset = test
         if isinstance(target_column, list):
             # create copy of dataset as we will make modifications to it
             index_dataset = index_dataset.copy()

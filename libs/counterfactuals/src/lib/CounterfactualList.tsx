@@ -5,7 +5,6 @@ import {
   IComboBoxOption,
   IComboBox,
   ConstrainMode,
-  DetailsList,
   DetailsListLayoutMode,
   DetailsRow,
   DetailsRowFields,
@@ -17,6 +16,7 @@ import {
   SelectionMode
 } from "@fluentui/react";
 import {
+  AccessibleDetailsList,
   defaultModelAssessmentContext,
   ICounterfactualData,
   ITelemetryEvent,
@@ -99,7 +99,7 @@ export class CounterfactualList extends React.Component<
       );
     }
     return (
-      <DetailsList
+      <AccessibleDetailsList
         items={items}
         columns={columns}
         selectionMode={SelectionMode.none}
@@ -109,6 +109,7 @@ export class CounterfactualList extends React.Component<
         onRenderItemColumn={this.renderItemColumn}
         onRenderRow={this.renderRow}
         onRenderDetailsFooter={this.onRenderDetailsFooter}
+        ariaLabel={localization.Counterfactuals.AriaLabel}
       />
     );
   }
@@ -143,7 +144,7 @@ export class CounterfactualList extends React.Component<
     if (selectedData && this.props.originalData) {
       items.push(this.props.originalData);
       selectedData.forEach((point, i) => {
-        const temp = {
+        const temp: Record<string, string | number> = {
           row: localization.formatString(
             localization.Counterfactuals.counterfactualEx,
             i + 1

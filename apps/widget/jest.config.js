@@ -8,10 +8,13 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
   preset: "../../jest.preset.js",
   transform: {
-    "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "@nrwl/react/plugins/jest",
+    "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "@nx/react/plugins/jest",
     "^.+\\.[tj]sx?$": [
       "babel-jest",
       { configFile: "./babel-jest.config.json", cwd: __dirname }
     ]
-  }
+  },
+  transformIgnorePatterns: [
+    "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
+  ]
 };

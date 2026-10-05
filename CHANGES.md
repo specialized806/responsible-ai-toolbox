@@ -24,6 +24,295 @@ this file to understand what changed.
 - bug fixes and tests
 - other
 
+## v0.36.0
+
+- educational materials
+  - Update getting-started.ipynb by @oohtmeel1 in https://github.com/microsoft/responsible-ai-toolbox/pull/2572
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - Fix robot page exception - Update StatsTableUtils.ts by @tongyu-microsoft in https://github.com/microsoft/responsible-ai-toolbox/pull/2568
+    - Fix robot page exception on TypeError: Cannot read properties of undefined (reading 'cohort') by @tongyu-microsoft in https://github.com/microsoft/responsible-ai-toolbox/pull/2540
+    - Fix responsibleai toolbox build failures due to dependency updates by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2571
+    - Fix build failures due to missing fridge datasets by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2573
+  - ## RAIInsights
+    - Update responsibleai to scikit-learn 1.5.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2570
+
+## v0.35.1
+
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - upgrade nx to 12.10.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2561
+    - remove pins on werkzeug, itsdangerous and markupsafe since they are currently not needed by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2565
+    - release rai-core-flask 0.7.6 by @tongyu-microsoft in https://github.com/microsoft/responsible-ai-toolbox/pull/2566
+  - ## RAI Vision
+    - fix wrapper constructor in ErrorAnalysisManager and RAIVisionInsights load call for RAI Vision Dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2560
+  - ## RAI Vision and Text
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.35.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2563
+    - release responsibleai-vision 0.3.8 and responsibleai-text 0.2.7 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2564
+
+## v0.35.0
+
+- new features
+  - ## RAI Vision
+    - Exif Nested Metadata support for Image Dashboards by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2542
+    - Nested Exif Metadata support + Gate fixes for py 3.7 and keras version by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2545
+    - Release responsibleai_vision 0.3.7 with Nested Exif Metadata support by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2549
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - fix bad whitespace in url format for azure compute instance base url by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2537
+    - release rai-core-flask 0.7.4 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2538
+    - Gates fix to remove py 3.7 for EOL & AutoML 2.0.6 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2543
+    - update ipython and werkzeug dependencies for responsibleai and rai-core-flask packages by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2551
+    - release rai-core-flask 0.7.5 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2553
+    - upgrade packages and CI to rai-core-flask==0.7.5, rai-utils==0.4.2 and rai-test-utils==0.4.2 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2556
+  - ## RAIInsights
+    - fix builds due to OneHotEncoder sparse parameter breaking change in scikit-learn by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2539
+    - update responsibleai and raiwidgets to erroranalysis 0.5.4 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2558
+  - ## RAI Vision
+    - fix label column incorrectly added by feature extractors in RAI Vision dashboard for automl models by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2532
+    - fix index into image_dimensions for drawing bounding boxes in object detection flyout by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2550
+  - ## RAI Vision and Text
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.34.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2534
+    - release responsibleai-vision 0.3.6 and responsibleai-text 0.2.6 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2535
+    - fix release github actions for RAI vision and text packages by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2536
+  - ## Error analysis
+    - fix erroranalysis test failures due to new shap release having inconsistent dimensions for single valued target by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/
+    - release erroranalysis 0.5.4 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2557pull/2552
+  - ## RAIUtils
+    - release rai-utils 0.4.2 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2555
+  - ## RAI Test Utils
+    - release rai-test-utils 0.4.2 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2554
+
+## v0.34.1
+
+- new features
+  - ## Responsible AI Dashboard
+    - Fix forecast flattening prediction list error by @jamesbchao in https://github.com/microsoft/responsible-ai-toolbox/pull/2529
+  - ## RAI Text
+    - Add methods and constants for genai metrics by @kartik727 in https://github.com/microsoft/responsible-ai-toolbox/pull/2524
+    - Genai integration by @kartik727 in https://github.com/microsoft/responsible-ai-toolbox/pull/2522
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - fix CD.yml permissions errors for dashboard links on PRs by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2525
+  - ## RAI Vision and Text
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.34.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2530
+
+## v0.34.0
+
+- new features
+  - ## Responsible AI Dashboard
+    - Private Link URL support by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2493
+    - PL Support on raiwidgets by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2500
+    - Flyout Bounding Box legend & accessibility fixes by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2497
+    - update UI to support genai task for RAI text dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2508
+    - add genai metrics endpoint in UI for model overview metrics (#2517) by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2520
+  - ## RAI Text
+    - Added metrics for genai text by @kartik727 in https://github.com/microsoft/responsible-ai-toolbox/pull/2514
+    - added generative text explainer by @mohsinposts in https://github.com/microsoft/responsible-ai-toolbox/pull/2516
+    - Add helper method for genai metrics by @kartik727 in https://github.com/microsoft/responsible-ai-toolbox/pull/2519
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - upgrade plotly to latest version 2.27.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2484
+    - LEGO: Pull request from JUNO/hb_a12a4630-4852-4e7d-9cbc-c0e1117da1ab_20231212124106972 to main by @csigs in https://github.com/microsoft/responsible-ai-toolbox/pull/2457
+    - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 113458687 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2460
+  - ## RAIInsights
+    - update responsibleai to interpret-community 0.31.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2488
+    - Release rai_core_flask 0.7.3 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2496
+    - fix builds by supporting sparse_output renamed parameter in OneHotEncoder in new scikit-learn version update by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2507
+  - ## RAI Vision
+    - fix vision data explorer elements truncated in smaller screen by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2478
+    - fix duplicate categorical features added from image exif metadata in RAI Vision Dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2483
+    - Accessibility Fix for Metric Checkboxes by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2485
+    - fix wrong metrics count missing in vision explorer of RAI Vision dashboard for object detection by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2495
+    - Class View Search Case Fix by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2498
+    - Dropdown option fix by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2505
+  - ## RAI Vision and Text
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.33.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2477
+    - release responsibleai-vision 0.3.5 and responsibleai-text 0.2.5 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2481
+    - release tensorflow pin in RAI vision and text package tests which was added last year to fix huggingface transformer models by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2472
+  - ## RAIUtils
+    - Fix retry function not stopping for long time after sending an interrupt by @kartik727 in https://github.com/microsoft/responsible-ai-toolbox/pull/2486
+- other
+  - Update MANIFEST.in for erroranalysis to include requirements-object-detection.txt by @rxm7706 in https://github.com/microsoft/responsible-ai-toolbox/pull/2476
+  - fix release script due to dependency test errors by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2482
+  - ignore error when uploading test dashboard from build for external forks by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2487
+  - ci: Use GITHUB_OUTPUT envvar instead of set-output command by @arunsathiya in https://github.com/microsoft/responsible-ai-toolbox/pull/2489
+
+## v0.33.0
+
+- new features
+  - ## Responsible AI Dashboard
+    - add AccessibleDetailsList with resizable columns for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2470
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - fix aria label for screen reader on scatter plot color axis picker by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2440
+    - fix RAI dashboard treat as categorical accessibility on new cohort create by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2446
+    - fix line-height override on add tab button for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2449
+    - fix pivot focus indicator for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2450
+    - fix confusion matrix highcharts heatmap keyboard focus order accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2452
+    - fix class importance weights callout truncated in small view for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2462
+    - fix tooltip callout keyboard focus order for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2464
+    - announce highcharts confusion matrix heatmap tooltip aria label for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2467
+    - announce search results in RAI Vision dashboard toolbar for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2466
+  - ## RAIInsights
+    - remove python 3.6 from builds, tests and packages by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2442
+    - Upgrade setup python from v4 to v5 by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2454
+    - release rai-core-flask 0.7.2 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2458
+    - update raiwidgets to rai-core-flask v0.7.2 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2459
+    - update numpy and numba dependencies by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2473
+  - ## RAI Vision
+    - fix luminosity ratio of RAI Vision dashboard success and failure instances text to background for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2444
+    - fix error when extracting exif metadata features from images in RAI Vision dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2461
+    - fix images missing alternate text in RAI Vision dashboard for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2463
+  - ## RAI Vision and Text
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.32.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2445
+    - release responsibleai-vision 0.3.4 and responsibleai-text 0.2.4 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2447
+    - fix socketio cors authentication for object detection and qa metrics requests by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2455
+  - ## Error analysis
+    - Data Imputation Fix in `erroranalysis` by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2436
+    - release erroranalysis 0.5.3 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2468
+    - update responsibleai and raiwidgets to erroranalysis 0.5.3 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2471
+- other
+  - update vscode settings for codeActionsOnSave to use new field instead of boolean by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2465
+
+## v0.32.1
+
+- new features
+  - ## Responsible AI Dashboard
+    - UI Improvement for Aggregate Object Detection Labels by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2431
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - Update raiwidgets to rai-core-flask v0.7.1 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2437
+  - ## RAI Vision
+    - update responsibleai-text and responsibleai-vision packages to responsibleai 0.32.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2420
+    - release responsibleai-vision 0.3.3 and responsibleai-text 0.2.3 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2421
+    - Added aria-labels to dropdowns by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2417
+    - make elements under image explorer view tab keyboard accessible by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2422
+    - Added aria-labels for sliders and checkboxes/DetailsList by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2419
+    - Added aria-labels to buttons by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2418
+    - fix switch cohort window getting clipped when zoomed in for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2430
+    - fix vision dashboard flyout accessibility on smaller screen size by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2432
+    - fix image downloader failing with automl format on deserialize due to missing label transformations by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2435
+    - fix save and switch button text overflowing for accessibility by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2438
+    - Object Detection Model Overview missing-class fix for Cohorts by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2429
+- other
+  - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 111947035 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2433
+  - LEGO: Pull request from JUNO/hb_a12a4630-4852-4e7d-9cbc-c0e1117da1ab_20231125124253772 to main by @csigs in https://github.com/microsoft/responsible-ai-toolbox/pull/2428
+  - Removed python 3.6 from CI-notebook gate by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2441
+  - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 112224195 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2434
+
+## v0.32.0
+
+- new features
+  - ## Responsible AI Dashboard
+    - add socket implementation to RAI dashboard object detection and question answering metrics calls by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2394
+    - Dashboard Port Updates by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2406
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - release rai-core-flask 0.7.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2398
+    - update raiwidgets to rai-core-flask v0.7.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2401
+    - Release new version of rai_core_flask by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2407
+    - fallback to request if socket connection fails for object detection and question answering metrics for backcompat by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2409
+    - Side Panel Bug Fix by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2414
+  - ## RAI Vision
+    - OD Explanation Loader Fix by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2381
+    - Optional support for IS_CROWD for OD COCO label format by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2395
+    - Import & data loading fixes for IC & multilabel notebooks by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2410
+    - fix RangeIndex error in error analysis for object detection models by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2411
+    - add average parameter to MeanAveragePrecision to specify micro or macro calculation by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2412
+  - ## Counterfactual
+    - Update requirements.txt to upgrade dice-ml to 0.11.0 by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2397
+    - Refer to predicted value from Counterfactual data by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2402
+  - ## Error analysis
+    - Accessibility fix for 'Error Analysis' header by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2415
+- other
+  - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 107831016 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2393
+  - LEGO: Pull request from JUNO/hb_a12a4630-4852-4e7d-9cbc-c0e1117da1ab_20231003114057604 to main by @csigs in https://github.com/microsoft/responsible-ai-toolbox/pull/2384
+  - LEGO: Pull request from JUNO/hb_a12a4630-4852-4e7d-9cbc-c0e1117da1ab_20231030114314322 to main by @csigs in https://github.com/microsoft/responsible-ai-toolbox/pull/2400
+  - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 109426168 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2408
+  - fix build errors due to changed exception messages and UCI repository expired certificate by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2413
+
+## v0.31.0
+
+- new features
+  - ## Responsible AI Dashboard
+    - Heatmap Support for Object Detection by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2303
+    - Vision Explanation Dashboard render refactor by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2306
+    - Single Container in Image Data Explorer for Object Detection by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2330
+    - Error Labeling integration into Image Data Explorer for Agg Labels by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2334
+    - Detection info inside Object Detection Flyout by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2339
+    - Categorical Exif Metadata support for Vision Dashboard by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2348
+    - Error Labeling Integration in Table View by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2350
+    - Numerical Exif Metadata support for Image Dashboards by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2358
+    - add local feature importance info button and include shap values in description for RAI text dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2373
+    - Error Labeling Integration in Class View by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2354
+    - Sorting support for Object Detection labels by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2376
+    - Forecasting: generate time series as cohorts by @romanlutz in https://github.com/microsoft/responsible-ai-toolbox/pull/2355
+  - ## RAI utils
+    - Add pandas timestamp support to json serialization utility function in raiutils by @romanlutz in https://github.com/microsoft/responsible-ai-toolbox/pull/2320
+  - ## RAI tabular
+    - Forecasting: consume locally served model by @romanlutz in https://github.com/microsoft/responsible-ai-toolbox/pull/2319
+- bug fixes and tests
+  - ## Responsible AI Dashboard
+    - accessibility: add aria label to RAI text dashboard slider by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2293
+    - Added ariaLabel to cohort dropdown by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2296
+    - UI Tests for Object Detection Widgets in Model Overview by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2295
+    - move text UI individual feature importance tests by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2299
+    - RAI Text Dashboard a11y: make scrollable pane focusable and use label attribute on slider by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2305
+    - Heatmap e2e test by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2239
+    - fix true y and pred y not appearing for QA text dashboard in table view by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2336
+    - fix failing object detection e2e jupyter notebook UI tests on linux by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2341
+    - Expanded Object Detection Flyout & Image Sizes by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2335
+    - add model explanation data to test app for question answering example on squad dataset by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2326
+    - fix alignment of true and predicted labels in vision data explorer by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2369
+    - fix choose cohorts close or cancel updating feature cohorts selection in flyout by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2366
+    - remove duplicate text in feature importance graph of the RAI Text dashboard by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2371
+    - remove non-functional page size selector from RAI Vision dashboard table view by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2370
+    - Backend and OD Notebook Dataset fixes by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2360
+    - Data Analysis Label Fix for OD by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2365
+    - Table View Search Fix for Multilabel & OD by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2367
+    - Enabling Heatmap test for Feature Cohort + MO test fixes by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2340
+  - ## RAI Text
+    - fix failing vision tests due to new RAI validation logic which doesn't allow non string dropped column names by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2302
+    - add text feature importance e2e unit tests for covid jupyter notebook by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2323
+    - add text feature importance e2e unit tests for dbpedia jupyter notebook by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2313
+    - fix error analysis for RAITextInsights displaying all incorrect instances for text labels by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2325
+    - add text feature importance e2e unit tests for blbooksgenre jupyter notebook by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2327
+    - fix question answering pipeline indexing error in shap due to varied token length after masking by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2332
+    - add RAITextInsights openai notebook example and tests by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2345
+  - ## RAI Vision
+    - fix failing vision tests due to new RAI validation logic which doesn't allow non string dropped column names by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2302
+    - OD model type support in responsibleai_vision for EA by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2233
+    - Test case for EA-OD flow by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2322
+    - fix data analysis description and tooltips hidden for large screens by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2368
+    - fix flaky object detection vision notebook test by allowing range of feature cohorts to be specified by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2374
+    - Unit test for Exif support in the Image Dashboards by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2382
+  - ## RAI Tabular
+  - ## Error analysis
+    - Hotfix to add VEM as soft dependency to `erroranalysis` by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2290
+    - EA ModelTask Fix by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2316
+- other
+  - update responsibleai-text and responsibleai-vision packages to responsibleai 0.30.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2300
+  - Update requirements-linting.txt to add `flake8-all-not-strings` by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2276
+  - Release erroranalysis 0.5.1 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2304
+  - Release Error Analysis 0.5.2 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2317
+  - increase verbosity for gated tests to help diagnose failures by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2301
+  - release responsibleai-vision 0.3.0 and responsibleai-text 0.2.0 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2315
+  - Release responsibleai_vision 0.3.1 by @Advitya17 in https://github.com/microsoft/responsible-ai-toolbox/pull/2321
+  - Add `create_complex_regression_pipeline` to `sklearn_model_utils.py` by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2318
+  - Remove pins on flake8 linter packages by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2328
+  - release responsibleai-text 0.2.1 by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2337
+  - causal_manager.py: Move user config validation checks from compute() to add() by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2342
+  - Fix links on README.md by @jamesbchao in https://github.com/microsoft/responsible-ai-toolbox/pull/2349
+  - Update README.md by @jamesbchao in https://github.com/microsoft/responsible-ai-toolbox/pull/2352
+  - Remove unreachable branch in `test_rai_insights_save_and_load_scenarios.py` by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2343
+  - Localized file check-in by OneLocBuild Task: Build definition ID 21368: Build ID 106178211 by @RubyZ10 in https://github.com/microsoft/responsible-ai-toolbox/pull/2375
+  - LEGO: Pull request from JUNO/hb_a12a4630-4852-4e7d-9cbc-c0e1117da1ab_20230928114108584 to main by @csigs in https://github.com/microsoft/responsible-ai-toolbox/pull/2372
+  - Add python 3.11 for erroranalysis, raiutils and rai-test-utils by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2385
+  - Add 3.11 support to rai-core-flask by @gaugup in https://github.com/microsoft/responsible-ai-toolbox/pull/2386
+  - fix failing builds due to pytorch dependencies by @imatiach-msft in https://github.com/microsoft/responsible-ai-toolbox/pull/2389
+  - pin responsibleai text and vision packages to 0.30.0 by @romanlutz in https://github.com/microsoft/responsible-ai-toolbox/pull/2387
+
 ## v0.30.0
 
 - educational materials

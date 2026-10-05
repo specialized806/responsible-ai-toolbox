@@ -17,6 +17,7 @@ import {
   emotionModelExplanationData
 } from "../model-assessment-text/__mock_data__/emotion";
 import { squad } from "../model-assessment-text/__mock_data__/squad";
+import { squadGenai } from "../model-assessment-text/__mock_data__/squadGenai";
 
 import {
   IDataSet,
@@ -26,7 +27,10 @@ import {
   IModelAssessmentDataSet
 } from "./applicationInterfaces";
 
-export const applicationKeys = <const>["interpretText", "modelAssessmentText"];
+export const applicationKeys = [
+  "interpretText",
+  "modelAssessmentText"
+] as const;
 
 export type ITextApplications = {
   [key in typeof applicationKeys[number]]: unknown;
@@ -36,7 +40,7 @@ export type ITextApplications = {
     IDataSet<IModelAssessmentDataSet>;
 };
 
-export const textApplications: ITextApplications = <const>{
+export const textApplications: ITextApplications = {
   interpretText: {
     datasets: {
       dbpediaLongDoc: { data: dbpediaLongDoc },
@@ -65,8 +69,12 @@ export const textApplications: ITextApplications = <const>{
       squad: {
         classDimension: 3,
         dataset: squad
+      } as IModelAssessmentDataSet,
+      squadGenai: {
+        classDimension: 3,
+        dataset: squadGenai
       } as IModelAssessmentDataSet
     },
     versions: { "1": 1, "2:Static-View": 2 }
   }
-};
+} as const;

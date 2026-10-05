@@ -171,13 +171,22 @@ class ResponsibleAIDashboardInput:
 
     def debug_ml(self, data):
         try:
-            features = data[0]
+            features = data[0]  # TODO: Remove prompt feature
             filters = data[1]
             composite_filters = data[2]
             max_depth = data[3]
             num_leaves = data[4]
             min_child_samples = data[5]
             metric = display_name_to_metric[data[6]]
+            if not hasattr(self._analysis, '_text_column'):
+                text_cols = None
+            else:
+                text_cols = self._analysis._text_column
+            if text_cols is None:
+                text_cols = []
+            elif isinstance(text_cols, str):
+                text_cols = [text_cols]
+            features = [f for f in features if f not in text_cols]
 
             filtered_data_df = self._prepare_filtered_error_analysis_data(
                 features, filters, composite_filters, metric)
@@ -436,9 +445,6 @@ class ResponsibleAIDashboardInput:
             predictions = convert_to_list(
                 self._analysis.model.forecast(filtered_data_df),
                 EXP_VIZ_ERR_MSG)
-            # forecast should return a flat list of predictions
-            if all([len(p) == 1 for p in predictions]):
-                predictions = [p[0] for p in predictions]
             return {
                 WidgetRequestResponseConstants.data: predictions
             }
@@ -482,5 +488,36 @@ class ResponsibleAIDashboardInput:
                 WidgetRequestResponseConstants.error:
                     "Failed to get Question Answering Model Overview metrics,"
                     "inner error: {}".format(e_str),
+                WidgetRequestResponseConstants.data: []
+            }
+
+    def get_generative_text_metrics(self, post_data):
+        """Flask endpoint function to get Model Overview metrics
+        for the Generative Text scenario.
+
+        :param post_data: List of inputs in the order
+        [true_y, predicted_y, aggregate_method, class_name, iou_threshold].
+        :type post_data: List
+
+        :return: JSON/dict data response
+        :rtype: Dict[str, List]
+        """
+        try:
+            selection_indexes = post_data[0]
+            generative_text_cache = post_data[1]
+            exp = self._analysis.compute_genai_metrics(
+                selection_indexes,
+                generative_text_cache
+            )
+            return {
+                WidgetRequestResponseConstants.data: exp
+            }
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+            e_str = _format_exception(e)
+            return {
+                WidgetRequestResponseConstants.error:
+                    EXP_VIZ_ERR_MSG.format(e_str),
                 WidgetRequestResponseConstants.data: []
             }

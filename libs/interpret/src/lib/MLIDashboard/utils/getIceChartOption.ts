@@ -9,9 +9,8 @@ import {
   ModelTypes
 } from "@responsible-ai/core-ui";
 import { localization } from "@responsible-ai/localization";
-import { RangeTypes } from "@responsible-ai/mlchartlib";
+import { RangeTypes, IData } from "@responsible-ai/mlchartlib";
 import { map } from "lodash";
-import { Data } from "plotly.js";
 
 import { buildYAxis } from "./buildYAxis";
 import { mergeXYData } from "./mergeXYData";
@@ -31,15 +30,10 @@ export function getIceChartOption(
   xData?: Array<number | string>,
   yData?: number[][] | number[][][]
 ): any {
-  if (
-    yData === undefined ||
-    xData === undefined ||
-    yData.length === 0 ||
-    yData.some((row: number[] | number[][]) => row === undefined)
-  ) {
+  if (yData === undefined || xData === undefined || yData.length === 0) {
     return undefined;
   }
-  const data: Data[] = map<number[] | number[][]>(
+  const data: IData[] = map<number[] | number[][]>(
     yData,
     (singleRow: number[] | number[][], rowIndex: number) => {
       const transposedY: number[][] = isTwoDimArray(singleRow)

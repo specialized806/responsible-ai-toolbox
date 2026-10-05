@@ -15,11 +15,12 @@
           "highcharts/modules/heatmap",
           "highcharts/modules/pattern-fill",
           "highcharts/modules/gantt",
-          "@nrwl/cypress/plugins/preprocessor"
+          "@nx/cypress/plugins/preprocessor"
         ]
       }
     ],
     "import/no-unresolved": "off",
+    "import/named": "off",
     "import/order": [
       "error",
       {

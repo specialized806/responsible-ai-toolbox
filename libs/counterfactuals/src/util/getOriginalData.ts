@@ -4,10 +4,15 @@
 import {
   ICounterfactualData,
   IDataset,
-  ifEnableLargeData,
   JointDataset
 } from "@responsible-ai/core-ui";
 import { localization } from "@responsible-ai/localization";
+
+function isNestedTestDataEntry(
+  entry: Array<string | number> | Array<Array<string | number>>
+): entry is Array<Array<string | number>> {
+  return Array.isArray(entry[0]);
+}
 
 export function getOriginalData(
   index: number,
@@ -15,15 +20,18 @@ export function getOriginalData(
   dataset: IDataset,
   counterfactualData?: ICounterfactualData
 ): { [key: string]: string | number } | undefined {
-  const data = {
+  const data: Record<string, string | number> = {
     row: localization.formatString(
       localization.Counterfactuals.referenceDatapoint,
       index
     )
   };
-  if (ifEnableLargeData(dataset) && counterfactualData) {
+  if (counterfactualData) {
     const featureNames = counterfactualData.feature_names_including_target;
-    const dataPoint = counterfactualData.test_data[0][0];
+    const firstTestDataEntry = counterfactualData.test_data[0];
+    const dataPoint = isNestedTestDataEntry(firstTestDataEntry)
+      ? firstTestDataEntry[0]
+      : firstTestDataEntry;
     featureNames.forEach((f, index) => {
       data[f] = dataPoint[index];
     });

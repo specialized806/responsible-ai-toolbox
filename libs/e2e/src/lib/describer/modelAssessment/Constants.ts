@@ -178,7 +178,7 @@ export enum Locators {
   AggregateBalanceMeasures = "#aggregateBalanceMeasures",
   AggregateBalanceMeasuresHeader = "#aggregateBalanceMeasures #aggregateBalanceMeasuresHeader",
   AggregateBalanceMeasuresTable = "#aggregateBalanceMeasures .ms-DetailsList",
-  AggregateBalanceMeasuresTableColumns = "#aggregateBalanceMeasures .ms-DetailsList-headerWrapper div[aria-label]",
+  AggregateBalanceMeasuresTableColumns = "#aggregateBalanceMeasures .ms-DetailsList-headerWrapper span[aria-label]",
   AggregateBalanceMeasuresTableRows = "#aggregateBalanceMeasures .ms-DetailsRow",
   ForecastingDashboard = "#ModelAssessmentDashboard #ForecastingDashboard",
   ForecastingTimeSeriesDropdown = "#ForecastingDashboard #ForecastingTimeSeriesDropdown",
@@ -225,5 +225,6 @@ export enum Locators {
   VisionDataExplorerImageExplorerViewImage = "#VisionDataExplorer #visionImage_0",
   VisionDataExplorerImageExplorerViewImagePredictedY = "#VisionDataExplorer #predictedY_0",
   VisionDataExplorerImageExplorerViewImageTrueY = "#VisionDataExplorer #trueY_0",
-  VisionDataExplorerImageExplorerViewImageODAggLabel = "#VisionDataExplorer #odAggregateLabel_0"
+  VisionDataExplorerImageExplorerViewImageODAggLabelCorrect = "#VisionDataExplorer #odAggregateLabel_correct_0",
+  VisionDataExplorerImageExplorerViewImageODAggLabelIncorrect = "#VisionDataExplorer #odAggregateLabel_incorrect_0"
 }

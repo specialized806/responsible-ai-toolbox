@@ -12,6 +12,7 @@ from zipfile import ZipFile
 
 import numpy as np
 import pandas as pd
+import piexif
 import shap
 import torch
 import torch.nn as nn
@@ -163,6 +164,15 @@ def create_dummy_model(df):
     return DummyFlowersClassifier()
 
 
+def create_raw_torchvision_classification_model():
+    """Creates a dummy torchvision model for testing purposes.
+
+    :return: dummy torchvision model
+    :rtype: torchvision.models.resnet.ResNet
+    """
+    return torchvision_models.vgg16(pretrained=False, num_classes=2)
+
+
 def retrieve_unzip_file(download_url, data_file):
     fetch_dataset(download_url, data_file)
     # extract files
@@ -172,13 +182,13 @@ def retrieve_unzip_file(download_url, data_file):
     os.remove(data_file)
 
 
-def load_fridge_dataset():
+def load_fridge_dataset(add_extra_mixed_metadata=False):
     # create data folder if it doesnt exist.
     os.makedirs("data", exist_ok=True)
 
     # download data
-    download_url = ("https://cvbp-secondary.z19.web.core.windows.net/" +
-                    "datasets/image_classification/fridgeObjects.zip")
+    download_url = ("https://publictestdatasets.blob.core.windows.net/" +
+                    "computervision/fridgeObjects.zip")
     data_file = "./data/fridgeObjects.zip"
     retrieve_unzip_file(download_url, data_file)
     # get all file names into a pandas dataframe with the labels
@@ -186,6 +196,14 @@ def load_fridge_dataset():
     for folder in os.listdir("./data/fridgeObjects"):
         for file in os.listdir("./data/fridgeObjects/" + folder):
             image_path = "./data/fridgeObjects/" + folder + "/" + file
+            if add_extra_mixed_metadata and file.endswith("1.jpg"):
+                with Image.open(image_path) as im:
+                    exif_dict = piexif.load(im.info['exif'])
+                    comment = 'Extra metadata for {}'.format(file).encode()
+                    exif_dict['0th'][piexif.ImageIFD.XPComment] = comment
+                    exif_dict['1st'][piexif.ImageIFD.XPComment] = comment
+                    exif_bytes = piexif.dump(exif_dict)
+                    im.save(image_path, exif=exif_bytes)
             data = data.append({IMAGE: image_path, LABEL: folder},
                                ignore_index=True)
     return data
@@ -275,8 +293,8 @@ def load_fridge_object_detection_dataset(automl_format=False):
     os.makedirs("data", exist_ok=True)
 
     # download data
-    download_url = ("https://cvbp-secondary.z19.web.core.windows.net/" +
-                    "datasets/object_detection/odFridgeObjects.zip")
+    download_url = ("https://publictestdatasets.blob.core.windows.net/" +
+                    "computervision/odFridgeObjects.zip")
     data_file = "./odFridgeObjects.zip"
     retrieve_unzip_file(download_url, data_file)
 
@@ -292,6 +310,46 @@ def load_fridge_object_detection_dataset(automl_format=False):
     features = []
     for i, file in enumerate(os.listdir("./data/odFridgeObjects/" + "images")):
         image_path = "./data/odFridgeObjects/" + "images" + "/" + file
+        if automl_format:
+            row = {
+                ImageColumns.IMAGE.value: image_path,
+                ImageColumns.IMAGE_DETAILS.value: image_details[i],
+                ImageColumns.LABEL.value: labels[i]
+            }
+        else:
+            row = {
+                ImageColumns.IMAGE.value: image_path,
+                ImageColumns.LABEL.value: labels[i]
+            }
+        features.append(row)
+
+    data = pd.DataFrame(features, columns=columns)
+    return data
+
+
+def load_clearsight_object_detection_dataset(automl_format=False):
+    # create data folder if it doesnt exist.
+    os.makedirs("data", exist_ok=True)
+
+    # download data
+    download_url = ("https://publictestdatasets.blob.core.windows.net/" +
+                    "computervision/clearsight_mini.zip")
+    data_file = "./data/clearsight_mini.zip"
+    retrieve_unzip_file(download_url, data_file)
+
+    # dummy function to load labels
+    labels = load_fridge_object_detection_dataset_labels(automl_format)[:2]
+    if automl_format:
+        image_details = load_image_details()
+        columns = [ImageColumns.IMAGE.value,
+                   ImageColumns.IMAGE_DETAILS.value,
+                   ImageColumns.LABEL.value]
+    else:
+        columns = [ImageColumns.IMAGE.value,
+                   ImageColumns.LABEL.value]
+    features = []
+    for i, file in enumerate(os.listdir("./data/clearsight_mini")):
+        image_path = "./data/clearsight_mini/" + file
         if automl_format:
             row = {
                 ImageColumns.IMAGE.value: image_path,
@@ -378,9 +436,8 @@ def load_multilabel_fridge_dataset():
     os.makedirs("data", exist_ok=True)
 
     # download data
-    download_url = ("https://cvbp-secondary.z19.web.core.windows.net/" +
-                    "datasets/image_classification/" +
-                    "multilabelFridgeObjects.zip")
+    download_url = ("https://publictestdatasets.blob.core.windows.net/" +
+                    "computervision/multilabelFridgeObjects.zip")
     folder_path = './data/multilabelFridgeObjects'
     data_file = folder_path + '.zip'
     retrieve_unzip_file(download_url, data_file)
@@ -435,6 +492,24 @@ class ImageClassificationPipelineSerializer(object):
 
     def _get_model_path(self, path):
         return os.path.join(path, 'image-classification-model')
+
+
+class TorchvisionDummyPipelineSerializer(object):
+    def save(self, model, path):
+        pass
+
+    def load(self, path):
+        return create_raw_torchvision_classification_model()
+
+
+class ObjectDetectionPipelineSerializer(object):
+    def save(self, model, path):
+        pass
+
+    def load(self, path):
+        return retrieve_fridge_object_detection_model(
+            load_fridge_weights=True
+        )
 
 
 class DummyFlowersPipelineSerializer(object):

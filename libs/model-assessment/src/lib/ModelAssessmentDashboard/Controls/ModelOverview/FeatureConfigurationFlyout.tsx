@@ -9,7 +9,6 @@ import {
   DefaultButton,
   Text,
   PanelType,
-  DetailsList,
   IColumn,
   Label,
   SpinButton,
@@ -19,6 +18,7 @@ import {
   MessageBarType
 } from "@fluentui/react";
 import {
+  AccessibleDetailsList,
   defaultModelAssessmentContext,
   getCompositeFilterString,
   ModelAssessmentContext
@@ -162,12 +162,20 @@ export class FeatureConfigurationFlyout extends React.Component<
                 .flyoutDescription
             }
           </Text>
-          <DetailsList
+          <AccessibleDetailsList
             items={items}
             columns={columns}
             selectionMode={SelectionMode.multiple}
             selection={this._selection}
             checkboxVisibility={CheckboxVisibility.always}
+            ariaLabelForSelectAllCheckbox={
+              localization.ModelAssessment.ModelOverview.featureConfiguration
+                .selectAllRowsAriaLabel
+            }
+            ariaLabel={
+              localization.ModelAssessment.ModelOverview.featureConfiguration
+                .featureSelectionAriaLabel
+            }
           />
         </Stack>
       </Panel>
@@ -227,10 +235,16 @@ export class FeatureConfigurationFlyout extends React.Component<
               tooManyFeaturesSelected ||
               (!featureSelectionChanged && !continuousFeatureBinningChanged)
             }
+            ariaLabel={
+              localization.ModelAssessment.ModelOverview.chartConfigApply
+            }
           />
           <DefaultButton
             onClick={this.props.onDismissFlyout}
             text={localization.ModelAssessment.ModelOverview.chartConfigCancel}
+            ariaLabel={
+              localization.ModelAssessment.ModelOverview.chartConfigCancel
+            }
           />
         </Stack>
       </Stack>

@@ -866,10 +866,12 @@ class RAIInsights(RAIBaseInsights):
         :rtype: pandas.DataFrame
         """
         large = use_entire_test_data and self._large_test is not None
-        pred_y = getattr(
-            self,
-            self._get_model_output_name(purpose=MethodPurpose.PREDICTION,
-                                        large=large))
+        pred_y = None
+        if self.model is not None:
+            pred_y = getattr(
+                self,
+                self._get_model_output_name(purpose=MethodPurpose.PREDICTION,
+                                            large=large))
         if large:
             test_data = self._large_test
             true_y = self._large_test[self.target_column]
@@ -1285,10 +1287,14 @@ class RAIInsights(RAIBaseInsights):
                 res_object[_UNIQUE_VALUES] = unique_value.tolist()
             elif datetime_features is not None and col in datetime_features:
                 res_object[_RANGE_TYPE] = "datetime"
+                min_value = test[col].min()
+                min_value = pd.to_datetime(min_value)
                 res_object[_MIN_VALUE] = \
-                    test[col].min().strftime(_STRF_TIME_FORMAT)
+                    min_value.strftime(_STRF_TIME_FORMAT)
+                max_value = test[col].max()
+                max_value = pd.to_datetime(max_value)
                 res_object[_MAX_VALUE] = \
-                    test[col].max().strftime(_STRF_TIME_FORMAT)
+                    max_value.strftime(_STRF_TIME_FORMAT)
             else:
                 col_min = test[col].min()
                 col_max = test[col].max()

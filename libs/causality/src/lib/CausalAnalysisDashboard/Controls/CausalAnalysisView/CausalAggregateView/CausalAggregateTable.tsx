@@ -3,7 +3,6 @@
 
 import {
   CheckboxVisibility,
-  DetailsList,
   DetailsListLayoutMode,
   IColumn,
   IDetailsColumnRenderTooltipProps,
@@ -13,6 +12,7 @@ import {
   TooltipHost
 } from "@fluentui/react";
 import {
+  AccessibleDetailsList,
   defaultModelAssessmentContext,
   ICausalAnalysisSingleData,
   ModelAssessmentContext,
@@ -102,7 +102,7 @@ export class CausalAggregateTable extends React.PureComponent<ICausalAggregateTa
     ];
     const items =
       this.props.data?.map((d) => {
-        const roundedData = {};
+        const roundedData: Record<string, unknown> = {};
         Object.entries(d).forEach(([key, value]) => {
           if (typeof value === "number") {
             roundedData[key] = value.toExponential(3);
@@ -113,7 +113,7 @@ export class CausalAggregateTable extends React.PureComponent<ICausalAggregateTa
         return roundedData;
       }) ?? [];
     return (
-      <DetailsList
+      <AccessibleDetailsList
         items={items}
         columns={columns}
         selectionMode={SelectionMode.none}
@@ -138,8 +138,9 @@ export class CausalAggregateTable extends React.PureComponent<ICausalAggregateTa
     if (!props) {
       return <div />;
     }
-    const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> =
-      (tooltipHostProps) => <TooltipHost {...tooltipHostProps} />;
+    const onRenderColumnHeaderTooltip: IRenderFunction<
+      IDetailsColumnRenderTooltipProps
+    > = (tooltipHostProps) => <TooltipHost {...tooltipHostProps} />;
     return (
       <div>
         {defaultRender?.({

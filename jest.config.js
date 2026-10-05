@@ -1,8 +1,8 @@
-const { getJestProjects } = require("@nrwl/jest");
+const { getJestProjectsAsync } = require("@nx/jest");
 
-module.exports = {
+module.exports = async () => ({
   projects: [
-    ...getJestProjects(),
+    ...(await getJestProjectsAsync()),
     "<rootDir>/libs/interpret",
     "<rootDir>/libs/fairness",
     "<rootDir>/libs/core-ui",
@@ -15,5 +15,8 @@ module.exports = {
     "<rootDir>/libs/error-analysis",
     "<rootDir>/libs/forecasting",
     "<rootDir>/apps/widget"
+  ],
+  transformIgnorePatterns: [
+    "/node_modules/(?!d3|d3-array|internmap|delaunator|robust-predicates)"
   ]
-};
+});

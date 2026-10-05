@@ -3,6 +3,8 @@
 
 import numpy as np
 import pandas as pd
+import sklearn
+from packaging import version
 from sklearn import svm
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -75,7 +77,7 @@ def create_sklearn_logistic_regressor(X, y, pipeline=False):
     return: A sklearn logistic regressor.
     rtype: sklearn.linear_model.LogisticRegression
     """
-    lin = LogisticRegression(solver='liblinear', random_state=777)
+    lin = LogisticRegression(solver='lbfgs', random_state=777, max_iter=1000)
     if pipeline:
         lin = Pipeline([('lin', lin)])
     model = lin.fit(X, y)
@@ -127,6 +129,11 @@ def create_titanic_pipeline(X_train, y_train):
             (conv(np.prod(x, axis=1)).reshape(-1, 1),
                 conv(np.prod(x, axis=1)**2).reshape(-1, 1))
         ))
+    # for older scikit-learn versions use sparse, for newer sparse_output:
+    if version.parse(sklearn.__version__) < version.parse('1.2'):
+        ohe_params = {"sparse": False}
+    else:
+        ohe_params = {"sparse_output": False}
     transformations = ColumnTransformer([
         ("age_fare_1", Pipeline(steps=[
             ('imputer', SimpleImputer(strategy='median')),
@@ -137,8 +144,8 @@ def create_titanic_pipeline(X_train, y_train):
         ("embarked", Pipeline(steps=[
             ("imputer",
                 SimpleImputer(strategy='constant', fill_value='missing')),
-            ("encoder", OneHotEncoder(sparse=False))]), ["embarked"]),
-        ("sex_pclass", OneHotEncoder(sparse=False), ["sex", "pclass"])
+            ("encoder", OneHotEncoder(**ohe_params))]), ["embarked"]),
+        ("sex_pclass", OneHotEncoder(**ohe_params), ["sex", "pclass"])
     ])
     clf = Pipeline(steps=[('preprocessor', transformations),
                           ('classifier',

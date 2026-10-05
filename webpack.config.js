@@ -1,17 +1,63 @@
-const nrwlConfig = require("@nrwl/react/plugins/webpack.js"); // require the main @nrwl/react/plugins/webpack configuration function.
+const { withReact } = require("@nx/react");
+const { composePlugins, withNx } = require("@nx/webpack");
 
-module.exports = (config) => {
-  nrwlConfig(config); // first call it so that it @nrwl/react plugin adds its configs,
+function withSvgr() {
+  return (config) => {
+    const svgLoaderIndex = config.module.rules.findIndex(
+      (rule) =>
+        typeof rule === "object" && rule.test?.toString().includes("svg")
+    );
+    if (svgLoaderIndex !== -1) {
+      config.module.rules.splice(svgLoaderIndex, 1);
+    }
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: require.resolve("@svgr/webpack"),
+          options: {
+            exportType: "named",
+            namedExport: "ReactComponent",
+            ref: true,
+            svgo: false,
+            titleProp: true
+          }
+        }
+      ]
+    });
+    return config;
+  };
+}
 
-  config.node = {
-    module: "empty",
-    dgram: "empty",
-    dns: "mock",
-    fs: "empty",
-    http2: "empty",
-    net: "empty",
-    tls: "empty",
-    child_process: "empty"
+module.exports = composePlugins(withNx(), withReact(), withSvgr(), (config) => {
+  config.experiments = {
+    ...config.experiments,
+    outputModule: false
+  };
+  config.output.chunkFormat = "array-push";
+  config.output.chunkLoading = "jsonp";
+  config.output.module = false;
+  config.output.publicPath = "";
+  const htmlPlugin = config.plugins.find(
+    (plugin) => plugin.constructor.name === "HtmlWebpackPlugin"
+  );
+  if (htmlPlugin) {
+    htmlPlugin.options.scriptLoading = "defer";
+    htmlPlugin.userOptions.scriptLoading = "defer";
+  }
+  config.resolve.fallback = {
+    ...config.resolve.fallback,
+    assert: require.resolve("assert/"),
+    child_process: false,
+    dgram: false,
+    dns: false,
+    fs: false,
+    http2: false,
+    module: false,
+    net: false,
+    stream: require.resolve("stream-browserify"),
+    tls: false,
+    url: require.resolve("url/")
   };
   config.module.rules.push({
     test: /\.py$/i,
@@ -31,4 +77,4 @@ module.exports = (config) => {
     });
   }
   return config;
-};
+});

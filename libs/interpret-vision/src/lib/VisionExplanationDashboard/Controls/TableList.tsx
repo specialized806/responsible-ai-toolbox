@@ -3,7 +3,6 @@
 
 import {
   FocusZone,
-  DetailsList,
   DetailsHeader,
   IDetailsHeaderProps,
   IGroup,
@@ -14,11 +13,17 @@ import {
   Selection,
   MarqueeSelection
 } from "@fluentui/react";
-import { DatasetTaskType, IVisionListItem } from "@responsible-ai/core-ui";
+import {
+  DatasetTaskType,
+  IVisionListItem,
+  AccessibleDetailsList
+} from "@responsible-ai/core-ui";
 import { localization } from "@responsible-ai/localization";
 import React from "react";
 
+import { getAltTextForItem } from "../utils/getAltTextUtils";
 import { getFilteredDataFromSearch } from "../utils/getFilteredData";
+import { getTableListColumns } from "../utils/getTableListColumns";
 import { isItemPredTrueEqual } from "../utils/labelUtils";
 import { visionExplanationDashboardStyles } from "../VisionExplanationDashboard.styles";
 
@@ -48,7 +53,7 @@ export class TableList extends React.Component<
       this.props.searchValue !== prevProps.searchValue
     ) {
       const filteredItems: IVisionListItem[] = this.getFilteredItems();
-      const searchVal = this.props.searchValue.toLowerCase();
+      const searchVal = this.props.searchValue.toLocaleLowerCase();
       const groups: IGroup[] =
         searchVal.length === 0
           ? this.getGroups()
@@ -67,76 +72,10 @@ export class TableList extends React.Component<
       filteredItems,
       groups
     );
-    const columns: IColumn[] = [
-      {
-        fieldName: "image",
-        isResizable: true,
-        key: "image",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnOne
-      },
-      {
-        fieldName: "index",
-        isResizable: true,
-        key: "index",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnTwo
-      }
-    ];
-    const labelColumns: IColumn[] = [
-      {
-        fieldName: "trueY",
-        isResizable: true,
-        key: "truey",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnThree
-      },
-      {
-        fieldName: "predictedY",
-        isResizable: true,
-        key: "predictedy",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnFour
-      }
-    ];
-    const objectDetectionLabelColumns: IColumn[] = [
-      {
-        fieldName: "correctDetections",
-        isResizable: true,
-        key: "correctDetections",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnThreeOD
-      },
-      {
-        fieldName: "incorrectDetections",
-        isResizable: true,
-        key: "incorrectDetections",
-        maxWidth: 400,
-        minWidth: 200,
-        name: localization.InterpretVision.Dashboard.columnFourOD
-      }
-    ];
-    if (this.props.taskType === DatasetTaskType.ObjectDetection) {
-      columns.push(...objectDetectionLabelColumns);
-    } else {
-      columns.push(...labelColumns);
-    }
-    const fieldNames = this.props.otherMetadataFieldNames;
-    fieldNames.forEach((fieldName) => {
-      columns.push({
-        fieldName,
-        isResizable: true,
-        key: fieldName,
-        maxWidth: 400,
-        minWidth: 200,
-        name: fieldName
-      });
-    });
+    const columns = getTableListColumns(
+      this.props.taskType,
+      this.props.otherMetadataFieldNames
+    );
     this.setState({
       columns,
       filteredGroups,
@@ -152,7 +91,7 @@ export class TableList extends React.Component<
         <Stack id="tabsViewTableList">
           <Stack.Item>
             <MarqueeSelection selection={this._selection}>
-              <DetailsList
+              <AccessibleDetailsList
                 key={this.props.searchValue}
                 items={this.state.filteredItems}
                 groups={this.state.filteredGroups}
@@ -163,6 +102,9 @@ export class TableList extends React.Component<
                 selection={this._selection}
                 setKey="set"
                 onItemInvoked={this.props.selectItem}
+                ariaLabel={
+                  localization.InterpretVision.Dashboard.tabOptionSecond
+                }
               />
             </MarqueeSelection>
           </Stack.Item>
@@ -176,14 +118,15 @@ export class TableList extends React.Component<
 
     items = items.concat(this.props.successInstances);
     items = items.concat(this.props.errorInstances);
-    const searchValue = this.props.searchValue.toLowerCase();
+    const searchValue = this.props.searchValue.toLocaleLowerCase();
     if (searchValue.length === 0) {
       return items;
     }
     const filteredItems = getFilteredDataFromSearch(
       searchValue,
       items,
-      this.props.taskType
+      this.props.taskType,
+      this.props.onSearchUpdated
     );
     return filteredItems;
   }
@@ -212,7 +155,7 @@ export class TableList extends React.Component<
     filteredItems: IVisionListItem[],
     groups: IGroup[]
   ): IGroup[] {
-    const searchValue = this.props.searchValue.toLowerCase();
+    const searchValue = this.props.searchValue.toLocaleLowerCase();
     if (searchValue.length === 0) {
       return groups;
     }
@@ -246,7 +189,6 @@ export class TableList extends React.Component<
     column?: IColumn | undefined
   ): React.ReactNode => {
     const classNames = visionExplanationDashboardStyles();
-
     let value =
       item && column && column.fieldName
         ? item[column.fieldName as keyof IVisionListItem]
@@ -267,9 +209,10 @@ export class TableList extends React.Component<
         : "";
     return (
       <Stack horizontal tokens={{ childrenGap: "s1" }}>
-        {image ? (
+        {image && item ? (
           <Stack.Item>
             <Image
+              alt={getAltTextForItem(item, this.props.taskType)}
               className={classNames.tableListImage}
               src={`data:image/jpg;base64,${image}`}
               style={{ width: this.props.imageDim }}
